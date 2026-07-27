@@ -18,6 +18,48 @@ HEALTH_URL = "http://127.0.0.1:3000/api/health"
 LOGIN_URL = "http://127.0.0.1:3000/login"
 
 
+def yarn_command(*args: str) -> list[str]:
+    yarn = shutil.which("yarn")
+    if yarn is not None:
+        return [yarn, *args]
+
+    corepack = shutil.which("corepack")
+    if corepack is not None:
+        return [corepack, "yarn", *args]
+
+    raise RuntimeError("Yarn or Corepack must be installed before syncing upstream.")
+
+
+def configure_node_toolchain() -> None:
+    expected_version = Path(".nvmrc").read_text().strip()
+    major_version = expected_version.removeprefix("v").split(".", 1)[0]
+    candidates = [
+        Path.home() / ".nvm" / "versions" / "node" / expected_version / "bin",
+        Path("/opt/homebrew/opt") / f"node@{major_version}" / "bin",
+        Path("/usr/local/opt") / f"node@{major_version}" / "bin",
+    ]
+
+    for bin_dir in candidates:
+        if (bin_dir / "node").exists() and (
+            (bin_dir / "yarn").exists() or (bin_dir / "corepack").exists()
+        ):
+            os.environ["PATH"] = f"{bin_dir}{os.pathsep}{os.environ['PATH']}"
+            break
+
+    node = shutil.which("node")
+    if node is None:
+        raise RuntimeError(f"Node {expected_version} must be installed before syncing upstream.")
+
+    actual_version = run([node, "--version"], capture=True).stdout.strip()
+    actual_major_version = actual_version.removeprefix("v").split(".", 1)[0]
+    if actual_major_version != major_version:
+        raise RuntimeError(f"Expected Node {major_version}.x, but found {actual_version}.")
+    print(
+        f"Using Node {actual_version} and {shlex.join(yarn_command())}.",
+        flush=True,
+    )
+
+
 def run(command: list[str], *, capture: bool = False) -> subprocess.CompletedProcess[str]:
     print(f"+ {shlex.join(command)}", flush=True)
     return subprocess.run(command, check=True, text=True, capture_output=capture)
@@ -55,9 +97,9 @@ def configure_upstream() -> None:
 def sync_and_build() -> None:
     run(["git", "fetch", "upstream", "main"])
     run(["git", "merge", "--no-edit", "upstream/main"])
-    run(["yarn", "install", "--immutable"])
+    run(yarn_command("install", "--immutable"))
     run(["make", "build-backend"])
-    run(["yarn", "build"])
+    run(yarn_command("build"))
 
 
 def require_free_port(port: int) -> None:
@@ -145,7 +187,7 @@ def verify_servers() -> None:
         backend, backend_log = start_server(["make", "run"], log_paths[0])
         processes.append(backend)
         log_files.append(backend_log)
-        frontend, frontend_log = start_server(["yarn", "start"], log_paths[1])
+        frontend, frontend_log = start_server(yarn_command("start"), log_paths[1])
         processes.append(frontend)
         log_files.append(frontend_log)
         wait_until_ready(processes)
@@ -170,6 +212,7 @@ def verify_servers() -> None:
 
 def main() -> None:
     require_safe_checkout()
+    configure_node_toolchain()
     configure_upstream()
     sync_and_build()
     verify_servers()
