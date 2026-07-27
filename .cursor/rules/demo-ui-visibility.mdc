@@ -1,0 +1,25 @@
+---
+description: Demo UI must be visible as admin/admin on homepage and dashboards
+alwaysApply: true
+---
+
+# Demo UI visibility
+
+This is a demo Grafana system. Visual and UI changes must be immediately visible when logging in with the default `admin` / `admin` user on the standard home page and dashboards.
+
+## Requirements
+
+- Gate demo UI only in ways `admin` / `admin` already satisfies (e.g. Admin / GrafanaAdmin role).
+- Prefer the home page and default dashboard surfaces — do not bury demo UI on obscure routes.
+- Do not hide demo visuals behind off-by-default feature toggles, special org setup, non-admin roles, or config the default admin login does not have.
+- If a change is meant to be seen in the demo, verify it appears after a normal login to http://127.0.0.1:3000 as `admin` / `admin`.
+
+## After visual changes
+
+Without waiting for the user to ask, reload the frontend via the grafana-dev skill:
+
+```bash
+python3 .cursor/skills/grafana-dev/scripts/grafana_dev.py reload-frontend
+```
+
+Use full `start` / `restart` only when backend changes also need a bounce.
