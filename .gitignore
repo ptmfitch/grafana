@@ -73,7 +73,10 @@ public/css/*.min.css
 .vscode/
 !.vscode/launch.json
 .vs/
-.cursor/
+.cursor/*
+!.cursor/skills/
+.cursor/skills/*
+!.cursor/skills/sync-grafana-upstream/
 .devcontainer/
 .claude/
 
