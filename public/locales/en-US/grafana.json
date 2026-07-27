@@ -4419,7 +4419,8 @@
     "empty-state": {
       "button-title": "Create dashboard",
       "pro-tip": "Add/move dashboards to your folder at <2>Browse dashboards</2>",
-      "title": "You haven't created any dashboards yet",
+      "pro-tip-root": "Create a dashboard to get started, or <2>connect a data source</2> first.",
+      "title": "No dashboards yet",
       "title-folder": "This folder doesn't have any dashboards yet"
     },
     "filters": {

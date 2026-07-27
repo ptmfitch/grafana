@@ -196,16 +196,26 @@ export function BrowseView({
             message={
               folderUID
                 ? t('browse-dashboards.empty-state.title-folder', "This folder doesn't have any dashboards yet")
-                : t('browse-dashboards.empty-state.title', "You haven't created any dashboards yet")
+                : t('browse-dashboards.empty-state.title', 'No dashboards yet')
             }
           >
-            {folderUID && !isReadOnlyRepo && (
-              <Trans i18nKey="browse-dashboards.empty-state.pro-tip">
-                Add/move dashboards to your folder at{' '}
-                <TextLink external={false} href="/dashboards">
-                  Browse dashboards
-                </TextLink>
+            {!folderUID ? (
+              <Trans i18nKey="browse-dashboards.empty-state.pro-tip-root">
+                Create a dashboard to get started, or{' '}
+                <TextLink external={false} href="/connections/datasources">
+                  connect a data source
+                </TextLink>{' '}
+                first.
               </Trans>
+            ) : (
+              !isReadOnlyRepo && (
+                <Trans i18nKey="browse-dashboards.empty-state.pro-tip">
+                  Add/move dashboards to your folder at{' '}
+                  <TextLink external={false} href="/dashboards">
+                    Browse dashboards
+                  </TextLink>
+                </Trans>
+              )
             )}
           </EmptyState>
         ) : (
