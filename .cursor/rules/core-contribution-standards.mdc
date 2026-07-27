@@ -1,0 +1,22 @@
+---
+description: Core Grafana contribution, security, and human review standards
+alwaysApply: true
+---
+
+# Core contribution standards
+
+- Follow patterns in the surrounding code.
+- Keep changes focused and avoid over-engineering.
+- Add tests for new functionality.
+- Prevent XSS, SQL injection, and command injection at trust boundaries.
+- Keep frontend and backend work in separate PRs when practical because they deploy at different cadences.
+
+## Comments
+
+- Comment only to explain why, an invariant, or non-obvious logic needed to change code safely.
+- Do not narrate self-explanatory code.
+- Never put Slack, GitHub, Jira, or other links in code comments.
+
+## Human review gate
+
+Before `git push`, summarize the changes and obtain explicit human approval. A request to open a PR expresses intent but does not itself authorize pushing.

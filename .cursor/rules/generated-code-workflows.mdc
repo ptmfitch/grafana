@@ -1,0 +1,16 @@
+---
+description: Required regeneration workflows for Grafana schemas, toggles, DI, and workspaces
+globs: "{kinds/**,pkg/server/**,pkg/services/featuremgmt/**,go.mod,go.work}"
+alwaysApply: false
+---
+
+# Generated code workflows
+
+Run the generator associated with the source being changed:
+
+- Wire service initialization or dependency injection: `make gen-go`
+- Dashboard or panel CUE schemas under `kinds/`: `make gen-cue`
+- Feature toggle definitions under `pkg/services/featuremgmt/`: `make gen-feature-toggles`
+- Added or changed Go modules/workspace membership: `make update-workspace`
+
+Do not hand-edit generated outputs when a source definition and generator exist. Include relevant generated changes with their source changes and verify that regeneration is clean.

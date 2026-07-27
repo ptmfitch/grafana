@@ -1,0 +1,20 @@
+---
+description: Grafana Go backend architecture and verification conventions
+globs: "{pkg,apps}/**/*.go"
+alwaysApply: false
+---
+
+# Go backend conventions
+
+- Put business logic in `pkg/services/<domain>/`, not in API handlers.
+- Keep service interfaces in the same package as their implementations.
+- Use `sqlstore` for database access and gRPC/protobuf for plugin communication.
+- Use the applicable `oss`, `enterprise`, or `pro` build tag.
+- Check for a directory-scoped `AGENTS.md` before changing a specialized subtree.
+
+## Dependency injection and verification
+
+- After changing service initialization or Wire dependencies, run `make gen-go`.
+- Prefer a targeted test first: `go test -run TestName ./path/to/package/`.
+- Use `make test-go-unit` for the full unit suite and `make lint-go` for Go linting when warranted.
+- Backend packages such as `pkg/api/` can take minutes to compile, so keep test scope proportional to the change.

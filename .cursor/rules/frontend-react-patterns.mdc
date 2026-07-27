@@ -1,0 +1,21 @@
+---
+description: Grafana TypeScript and React implementation and test patterns
+globs: "{public/app,packages}/**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Frontend conventions
+
+- Use Redux Toolkit slices rather than legacy Redux patterns.
+- Build function components with hooks.
+- Style components with Emotion through `useStyles2`.
+- Use RTK Query for data fetching.
+- Test UI behavior with React Testing Library.
+- Check for a directory-scoped `AGENTS.md` before changing a specialized subtree.
+
+## Verification
+
+- Run focused tests with `yarn jest --no-watch path/to/test` or pass `--watchAll=false`; `yarn test` watches by default.
+- Use `yarn lint`, `yarn prettier:write`, and `yarn typecheck` as appropriate.
+- Built-in plugin workspaces may require `yarn workspace @grafana-plugins/<name> dev`.
+- Run Yarn, Jest, and webpack through a login shell in Cursor Cloud so the pinned Node version is used.
