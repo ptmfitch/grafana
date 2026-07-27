@@ -10,6 +10,8 @@ import * as useFolderReadmeModule from 'app/features/provisioning/hooks/useFolde
 import { type DashboardViewItem } from 'app/features/search/types';
 import { AccessControlAction } from 'app/types/accessControl';
 
+import * as browseHooks from '../state/hooks';
+
 import { BrowseView } from './BrowseView';
 
 const [mockTree, { folderA, folderA_folderA, folderA_folderB, folderA_folderB_dashbdB, dashbdD, folderB_empty }] =
@@ -35,6 +37,10 @@ describe('browse-dashboards BrowseView', () => {
       }
       return false;
     });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('expands and collapses a folder', async () => {
@@ -145,6 +151,7 @@ describe('browse-dashboards BrowseView', () => {
         <BrowseView permissions={mockPermissions} folderUID={folderB_empty.item.uid} width={WIDTH} height={HEIGHT} />
       );
       expect(await screen.findByText('Create dashboard')).toBeInTheDocument();
+      expect(await screen.findByText("This folder doesn't have any dashboards yet")).toBeInTheDocument();
     });
 
     it('shows a simple message if the user has viewer rights', async () => {
@@ -164,6 +171,22 @@ describe('browse-dashboards BrowseView', () => {
         />
       );
       expect(await screen.findByText('This folder is empty')).toBeInTheDocument();
+    });
+  });
+
+  describe('root empty state', () => {
+    it('shows softened title, create CTA, and data source hint', async () => {
+      jest.spyOn(browseHooks, 'useBrowseLoadingStatus').mockReturnValue('fulfilled');
+      jest.spyOn(browseHooks, 'useFlatTreeState').mockReturnValue([]);
+
+      render(<BrowseView permissions={mockPermissions} folderUID={undefined} width={WIDTH} height={HEIGHT} />);
+
+      expect(await screen.findByText('No dashboards yet')).toBeInTheDocument();
+      expect(screen.getByText('Create dashboard')).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'connect a data source' })).toHaveAttribute(
+        'href',
+        '/connections/datasources'
+      );
     });
   });
 
