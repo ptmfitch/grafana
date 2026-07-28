@@ -60,7 +60,7 @@ export function StatusHud() {
       title={t('navigation.status-hud.title', 'Grafana health status')}
     >
       <span className={isOk ? styles.dotOk : styles.dotError} aria-hidden />
-      {isOk && <span className={styles.label}>OK</span>}
+      {isOk && <span className={styles.label}>{label}</span>}
     </div>
   );
 }
